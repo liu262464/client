@@ -63,7 +63,7 @@ export default {
       );
       res
       .then((data)=>{
-        alert(data)
+        //alert(data)
         this.setClientName(data.username);
         this.setClientToken(data.token);
         this.$router.push('/');

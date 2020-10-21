@@ -16,34 +16,35 @@
       <ul class="orderList">
         <li v-for="(item,index) in orderList" :key="'order'+item.id">
           <div class="orderHeader">
-            <span class="orderTime">{{item.createtime}}</span>
-            <span class="orderId">{{'订单号：'+item.id}}</span>
-            <span class="state">{{tagList[item.state+1]}}</span>
-            <span class="deleteBtn" @click="deleteOrder(item.id)"><i class="iconfont icon-close" /></span>
+            <span class="orderTime">{{item.order.createTime}}</span>
+            <span class="orderId">{{'订单号：'+item.order.id}}</span>
+            <span class="state">{{tagList[item.order.status+1]}}</span>
+            <span class="deleteBtn" @click="deleteOrder(item.order.id)"><i class="iconfont icon-close" /></span>
           </div>
           <div class="orderDetail">
-            <img :src="item.goods.img" alt="商品图片" />
+            <img :src="item.product.imgUrl" alt="商品图片" />
             <div class="goodsName">
-              <p @click="navTo('/mall/goods/'+item.goods.id)">{{item.goods.name}}</p>
-              <span>{{item.goods.spec}}</span>
+              <p @click="navTo('/mall/goods/'+item.product.id)">{{item.product.name}}</p>
+              <span>{{item.product.desc}}</span>
             </div>
-            <span class="unitPrice">{{'￥'+item.goods.unitPrice}}</span>
-            <span class="num">{{item.goodsNum}}</span>
-            <span class="amount">{{'￥'+item.amount}}</span>
-            <button v-if="item.state===0" @click="confirmPay(item.id)">确认付款</button>
-            <button v-else-if="item.state===2" @click="confirmReceive(item.id)">确认收货</button>
-            <button v-else-if="item.state===3 && !item.hasComment" @click="showPopup(item.id,item.goods.id,item.goods.goodsDetailId)">评价</button>
-            <span class="hasComment" v-else-if="item.state===3 && item.hasComment">已评价</span>
+            <span class="unitPrice">{{'￥'+item.product.price}}</span>
+            <span class="num">{{item.order.num}}</span>
+            <span class="amount">{{'￥'+item.order.price}}</span>
+            <button v-if="item.order.state==='未支付'" @click="confirmPay(item.order.id)">确认付款</button>
+            <button v-else-if="item.state==='已支付'" @click="confirmReceive(item.order.id)">确认收货</button>
+<!--            <button v-else-if="item.state===3 && !item.hasComment" @click="showPopup(item.order.id,item.product.id,item.product.goodsDetailId)">评价</button>-->
+<!--            <span class="hasComment" v-else-if="item.state===3 && item.hasComment">已评价</span>-->
           </div>
         </li>
       </ul>
     </div>
+    <div id="qrcode"></div>
     <Popup title="商品评价" @popupClose="closePopup" v-show="popupShow">
       <div class="popupContent" slot="popupContent">
         <div class="scoreBox">
           <span class="tips">评分：</span>
-          <i 
-            class="iconfont icon-collection_fill" 
+          <i
+            class="iconfont icon-collection_fill"
             v-for="(item,index) in 5"
             :key="'star'+index"
             :style="{color:(index+1)<=curStar?'#f9bd4f':'white'}"
@@ -63,6 +64,7 @@
 import { mapState } from 'vuex';
 import {getOrderByState,deleteOrder,confirmReceive,pay,sendComment} from '../../api/client';
 import Popup from '../../components/Popup';
+import QRCode from 'qrcodejs2'  // 引入qrcode
 
 export default {
   name: 'MyOrder',
@@ -125,18 +127,31 @@ export default {
 
     confirmPay(orderId){
       const res = pay(orderId);
-      res
-      .then(()=>{
-        alert('支付成功！');
-        this.orderList.map((item,index)=>{
+      res.then((data)=>{
+          //alert("进入")
+          console.log(data)
+          alert(data.code_url)
+          //this.setClientName(data.username);
+          //this.setClientToken(data.token);
+          //this.$router.push('/');
+        })
+        .catch((e)=>{
+          alert(e)
+        })
+/*      res
+      .then((data)=>{
+        //alert('支付成功！');
+        console.log(data)
+        //this.qrcode(data.code_url)
+        /!*this.orderList.map((item,index)=>{
           if(item.id===orderId){
             item.state = 1;
           }
-        })
+        })*!/
       })
       .catch((e)=>{
         alert(e);
-      })
+      })*/
     },
     confirmReceive(orderId){
       const res = confirmReceive(orderId);
@@ -205,7 +220,17 @@ export default {
     confirmStar(star){
       this.curStar = star;
       this.hasClickStar = true;
-    }
+    },
+    //二维码生成
+    qrcode(url) {
+      let qrcode = new QRCode('qrcode', {
+        width: 132,
+        height: 132,
+        text: url, // 二维码地址
+        colorDark : "#000",
+        colorLight : "#fff",
+      })
+    },
   },
 
   mounted(){
@@ -217,11 +242,21 @@ export default {
 <style scoped lang="less">
 @import "../../assets/css/var.less";
 .MyOrder{
+
+  #qrcode {
+    display: inline-block;
+    img {
+      width: 132px;
+      height: 132px;
+      background-color: #fff; //设置白色背景色
+      padding: 6px; // 利用padding的特性，挤出白边
+    }
+  }
   .tagList{
     li{
       text-align: center;
       display: inline-block;
-      font-weight: 550;
+      //font-weight: 550;
       font-size: 18px;
       border-bottom: 2px solid @borderColor;
       cursor: pointer;

@@ -202,7 +202,7 @@ export function addOrder(data){
 
 //获得用户订单列表
 export function getOrderByState(state,token){
-	const res = axios.get('/api/mall/getOrderByState?state='+state+'&token='+token);
+	const res = axios.get('/api/order/getOrderByState?state='+state+'&token='+token);
 	return new Promise((resolve,reject)=>{
 		res
 		.then((result)=>{
@@ -277,27 +277,28 @@ export function confirmReceive(id){
 
 //确认付款
 export function pay(id){
-	const res = axios.get('/api/mall/pay?id='+id);
-	return new Promise((resolve,reject)=>{
-		res
-		.then((result)=>{
-	        if(result.status===200){
-	        	return result.data;
-	        }else{
-	        	reject(result.status)
-	        }
-	    })
-	    .then((json)=>{
-    		if(json.code===0){
-                resolve();
-            }else{
-                reject(json.message);
-            }
-    	})
-	    .catch((e)=>{
-	    	reject(e.toString())
-	    })
-	})
+	const res = axios.get('/api/payLog/createQr/'+id);
+  return new Promise((resolve,reject)=>{
+    res
+      .then((result)=>{
+        if(result.status===200){
+         //console.log(result)
+          return result.data;
+        }else{
+          reject(result.status)
+        }
+      })
+      .then((json)=>{
+        if(json.code===0){
+          resolve();
+        }else{
+          reject(json.message);
+        }
+      })
+      .catch((e)=>{
+        reject(e.toString())
+      })
+  })
 }
 
 //获得用户资料
