@@ -153,6 +153,7 @@ export default {
       goodsName:'',
       goodsDesc:'',
       stockNum: 0,
+      goodsId: 0,
       price: 0,
       specs:[],
       typeId:'',
@@ -184,6 +185,7 @@ export default {
         this.goodsDesc = data.desc;
         this.price = data.price;
         this.stockNum = data.total;
+        this.goodsId = data.id;
         // this.specs = data.specs;
         // this.typeId = data.typeId;
         // this.temSpecId = data.specs[0].id;
@@ -241,10 +243,9 @@ export default {
       }
       const res = addOrder({
         token:this.clientToken,
-        goodsDetailId:this.temSpecId,
-        state:0,
+        productId: this.id,
         num:this.num,
-        amount:this.goodsPrice
+        price:this.goodsPrice
       });
       res
       .then(()=>{
