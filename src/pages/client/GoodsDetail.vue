@@ -48,9 +48,9 @@
                 <div class="commentInfo">
                   <div class="starList">
                     <i
-                      class="iconfont icon-collection_fill" 
-                      v-for="(star,index) in (item.score/20)" 
-                      :key="item.id+''+index" 
+                      class="iconfont icon-collection_fill"
+                      v-for="(star,index) in (item.score/20)"
+                      :key="item.id+''+index"
                     />
                   </div>
                   <p class="specName">{{item.specName}}</p>
@@ -87,11 +87,11 @@
       <section class="typeGoods rightContainer">
         <div class="title">相似商品</div>
         <ul class="list">
-          <GoodsItem 
-            v-for="(item,index) in filterList" 
+          <GoodsItem
+            v-for="(item,index) in filterList"
             :key="+item.id"
             :id="item.id"
-            :img="item.img"
+            :img="item.imgUrl"
             :name="item.name"
             :price="item.price"
           />
@@ -124,22 +124,22 @@ export default {
       return this.$route.params.id;
     },
     goodsPrice(){
-      let unitPrice = 0; 
-      this.specs.map((item,index)=>{
-        if(item.id===this.temSpecId){
-          unitPrice = Number(item.unitPrice);
-        }
-      })
-      return (this.num*unitPrice);
+      let unitPrice = 0;
+      // this.specs.map((item,index)=>{
+      //   if(item.id===this.temSpecId){
+      //     unitPrice = Number(item.unitPrice);
+      //   }
+      // })
+      return (this.num*this.price);
     },
     temStockNum(){
-      let stockNum = 0; 
-      this.specs.map((item,index)=>{
-        if(item.id===this.temSpecId){
-          stockNum = Number(item.stockNum);
-        }
-      })
-      return stockNum;
+      // let stockNum = 0;
+      // this.specs.map((item,index)=>{
+      //   if(item.id===this.temSpecId){
+      //     stockNum = Number(item.stockNum);
+      //   }
+      // })
+      return this.stockNum;
     },
     filterList(){
       return this.goodsList.filter((item)=>{
@@ -152,6 +152,8 @@ export default {
       goodsImg:'',
       goodsName:'',
       goodsDesc:'',
+      stockNum: 0,
+      price: 0,
       specs:[],
       typeId:'',
       temSpecId:0,
@@ -175,16 +177,22 @@ export default {
       const res = getGoodsInfo(id);
       res
       .then((data)=>{
-        this.goodsImg = data.img;
+        console.log(data)
+        console.log(data.imgUrl)
+        this.goodsImg = data.imgUrl;
         this.goodsName = data.name;
         this.goodsDesc = data.desc;
-        this.specs = data.specs;
-        this.typeId = data.typeId;
-        this.temSpecId = data.specs[0].id;
-        this.getTypeGoodsList(data.typeId);
+        this.price = data.price;
+        this.stockNum = data.total;
+        // this.specs = data.specs;
+        // this.typeId = data.typeId;
+        // this.temSpecId = data.specs[0].id;
+        // this.getTypeGoodsList(data.typeId);
+
+
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 
@@ -195,7 +203,7 @@ export default {
         this.msgList=data
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 
@@ -222,7 +230,7 @@ export default {
         this.askContent = '';
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 
@@ -243,7 +251,7 @@ export default {
         alert('加入购物车成功！请前往 个人中心->购物车 结算')
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 
@@ -264,7 +272,7 @@ export default {
         alert('自动付款成功！请耐心等待包裹派送~')
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 
@@ -281,7 +289,7 @@ export default {
         this.commentList = data.commentList;
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 
@@ -291,7 +299,7 @@ export default {
         this.goodsList = data;
       })
       .catch((e)=>{
-        alert(e);
+        // alert(e);
       })
     },
 

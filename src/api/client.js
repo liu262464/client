@@ -52,7 +52,7 @@ export function signup(data){
 
 //得到类目
 export function getTypes(){
-	const res = axios.get('/api/admin/getType');
+	const res = axios.get('/api/product/getType');
 	return new Promise((resolve,reject)=>{
 		res
 		.then((result)=>{
@@ -76,8 +76,8 @@ export function getTypes(){
 }
 
 //获得不同类目的商品
-export function getGoodsList(typeId){
-	const res = axios.get('/api/mall/getGoodsByType?typeId='+typeId);
+export function getGoodsList(type){
+	const res = axios.get('api/product/list/'+type);
 	return new Promise((resolve,reject)=>{
 		res
 		.then((result)=>{
@@ -102,7 +102,7 @@ export function getGoodsList(typeId){
 
 //获得商品详情页信息
 export function getGoodsInfo(id){
-	const res = axios.get('/api/mall/getGoodsInfo?id='+id);
+	const res = axios.get('/api/product/'+id);
 	return new Promise((resolve,reject)=>{
 		res
 		.then((result)=>{
