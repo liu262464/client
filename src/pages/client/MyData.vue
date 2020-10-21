@@ -7,24 +7,24 @@
       </li>
       <li>
         <span>账号</span>
-        <p>{{email}}</p>
+        <p>{{account}}</p>
       </li>
       <li>
         <span>昵称</span>
-        <input type="text" v-model="nickname" />
+        <input type="text" v-model="username" />
       </li>
-      <li>
-        <span>收件人</span>
-        <input type="text" v-model="recipient" />
-      </li>
+<!--      <li>-->
+<!--        <span>收件人</span>-->
+<!--        <input type="text" v-model="recipient" />-->
+<!--      </li>-->
       <li>
         <span>收件地址</span>
         <input type="text" class="long" v-model="address" />
       </li>
-      <li>
-        <span>联系电话</span>
-        <input type="text" v-model="phone" />
-      </li>
+<!--      <li>-->
+<!--        <span>联系电话</span>-->
+<!--        <input type="text" v-model="phone" />-->
+<!--      </li>-->
       <li>
         <span>密码</span>
         <button @click="showPopup">修改密码</button>
@@ -61,11 +61,11 @@ export default {
     return {
       id:'',
       headimg:'',
-      email:'',
-      nickname:'',
-      recipient:'',
+      //email:'',
+      username:'',
+      //recipient:'',
       address:'',
-      phone:'',
+      account:'',
       popupShow:false,
       oldPwd:'',
       newPwd:'',
@@ -129,12 +129,12 @@ export default {
     res
     .then((data)=>{
       this.id = data.id;
-      this.headimg = data.headimg;
-      this.email = data.email;
-      this.nickname = data.nickname;
-      this.recipient = data.recipient;
+      this.headimg = data.avatar;
+      //this.email = data.email;
+      this.username = data.username;
+    //  this.recipient = data.recipient;
       this.address = data.address;
-      this.phone = data.phone;    
+      this.account = data.account;
     })
     .catch((e)=>{
       alert(e)
