@@ -87,8 +87,8 @@ export default {
         //this.setClientName(data.name);
         //this.setClientToken(data.token);
         //this.$router.push('/login');
-        //重定向到login页
-        window.location.href = '/login'
+        //刷新当前页
+        this.$router.go(0)
       })
       .catch((e)=>{
         alert(e)
