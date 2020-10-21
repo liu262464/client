@@ -8,17 +8,17 @@
     <section class="newGoods section">
       <SectionHeader title="新品首发" tips="周一周四上新，为你寻觅世间好物" moreText="更多新品>"/>
       <Slick
-        :ulWidth="(266*goodsList.length)+(10*(goodsList.length-1))" 
+        :ulWidth="(266*goodsList.length)+(10*(goodsList.length-1))"
         :showWidth="(266*4)+(10*3)"
         :height="360"
       >
         <ul class="goodsList" :style="{width:`${(266*goodsList.length)+(10*(goodsList.length-1))}px`}" slot="list">
-          <GoodsItem 
-            v-for="(item,index) in goodsList" 
+          <GoodsItem
+            v-for="(item,index) in goodsList"
             :style="{marginRight: (index+1)%4===0?'0px':'10px'}"
             :key="+item.id"
             :id="item.id"
-            :img="item.img"
+            :img="item.imgUrl"
             :name="item.name"
             :price="item.price"
           />
@@ -41,7 +41,7 @@
           </div>
           <div class="allBtn">查看全部 ></div>
         </div><ul class="right"><li v-for="(item,index) in goodsList.slice(0,4)" :key="item.id">
-            <img class="leftImg" :src="item.img" />
+            <img class="leftImg" :src="item.imgUrl" />
             <div class="rightBox">
               <p class="goodsName ellipsis" @click="navTo('/mall/goods/'+item.id)">{{item.name}}</p>
               <div class="less">
@@ -62,20 +62,20 @@
       <SectionHeader title="人气推荐" tips="最火最潮商品，为您挑选" moreText="更多推荐>"/>
       <div class="content">
         <ul class="left">
-          <GoodsItem 
+          <GoodsItem
             :id="goodsList[0].id"
-            :img="goodsList[0].img"
+            :img="goodsList[0].imgUrl"
             :name="goodsList[0].name"
             :price="goodsList[0].price"
           />
         </ul>
         <ul class="right">
-           <GoodsItem 
-            v-for="(item,index) in goodsList.slice(3,9)" 
+           <GoodsItem
+            v-for="(item,index) in goodsList.slice(3,9)"
             :style="{marginBottom: index<=2?'10px':'0px'}"
             :key="+item.id"
             :id="item.id"
-            :img="item.img"
+            :img="item.imgUrl"
             :name="item.name"
             :price="item.price"
           />
@@ -120,12 +120,12 @@
     <section class="typeSection section" v-for="(item,index) in typeList.slice(1)" :key="item.id">
       <SectionHeader :title="item.name" tips="" moreText="查看更多>" @click.native="selectType(item.id)"/>
       <ul class="content">
-          <GoodsItem 
-            v-for="(item,index) in filterGoodsByType(item.id).slice(0,4)" 
+          <GoodsItem
+            v-for="(item,index) in filterGoodsByType(item.id).slice(0,4)"
             :style="{marginRight: (index+1)%4===0?'0px':'25px'}"
             :key="+item.id"
             :id="item.id"
-            :img="item.img"
+            :img="item.imgUrl"
             :name="item.name"
             :price="item.price"
           />
@@ -160,7 +160,7 @@ export default {
   },
   data () {
     return {
-      typeList:[],
+      typeList:[{id: 1,name: "sdsad"}],
       goodsList:[],
       initTimestamp:0,
       newTimestamp:0,
@@ -190,9 +190,10 @@ export default {
       const res = getGoodsList(typeId);
       res.then((data)=>{
         this.goodsList = data;
+        console.log(this.goodsList)
       })
       .catch((e)=>{
-        alert(e);
+        console.log(e)
       })
     },
     searchTip(tip){
@@ -214,20 +215,21 @@ export default {
   },
 
   mounted(){
+    this.getGoodsList(-1);
     //获取数据
-    const res = getTypes();
-    res
-    .then((data)=>{
-      data.unshift({
-        id:-1,
-        name:'首页'
-      });
-      this.typeList = data;
-      this.getGoodsList(-1);
-    })
-    .catch((e)=>{
-      alert(e);
-    });
+    // const res = getTypes();
+    // res
+    // .then((data)=>{
+    //   data.unshift({
+    //     id:-1,
+    //     name:'首页'
+    //   });
+    //   this.typeList = data;
+    //   this.getGoodsList(-1);
+    // })
+    // .catch((e)=>{
+    //   // alert(e);
+    // });
 
     //记录打开网页再加四小时的时间
     this.initTimestamp = new Date().getTime()+(4*60*60*1000);

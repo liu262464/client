@@ -4,9 +4,9 @@
       <div slot="navContent" class="container fixedNavContainer">
         <h3 class="fixedLeft" @click="navTo('/mall/show/index')">MoreMall</h3>
         <ul class="fixedRight">
-          <li 
-            v-for="(item,index) in typeList" 
-            :key="'type'+item.id" 
+          <li
+            v-for="(item,index) in typeList"
+            :key="'type'+item.id"
             :class="{selected:judgeCurPath(item.id)}"
             @click="selectType(item.id)"
           >
@@ -29,9 +29,9 @@
       </div>
     </div>
     <ul ref="typeList" class="typeList">
-      <li 
-        v-for="(item,index) in typeList" 
-        :key="'type'+item.id" 
+      <li
+        v-for="(item,index) in typeList"
+        :key="'type'+item.id"
         :class="{selected:judgeCurPath(item.id)}"
         @click="selectType(item.id)"
       >
@@ -60,7 +60,7 @@ export default {
   },
   data () {
     return {
-      typeList:[],
+      typeList:[{id: 1, name: ""}],
       searchText:'',
       tips:['aa','bb','cc'],
       navShouldFixed:false,
@@ -121,18 +121,18 @@ export default {
 
   mounted(){
     //获取数据
-    const res = getTypes();
-    res
-    .then((data)=>{
-      data.unshift({
-        id:-1,
-        name:'首页'
-      });
-      this.typeList = data;
-    })
-    .catch((e)=>{
-      alert(e);
-    });
+    // const res = getTypes();
+    // res
+    // .then((data)=>{
+    //   data.unshift({
+    //     id:-1,
+    //     name:'首页'
+    //   });
+    //   this.typeList = data;
+    // })
+    // .catch((e)=>{
+    //   alert(e);
+    // });
 
     //监听滚动事件
     document.addEventListener('scroll',this.scrollHandle,false);
