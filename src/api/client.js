@@ -177,7 +177,7 @@ export function askGoodsMsg(data){
 
 //加入购物车
 export function addOrder(data){
-	const res = axios.post('/api/mall/addOrder',data);
+	const res = axios.post('/api/order/addOrder',data);
 	return new Promise((resolve,reject)=>{
 		res
 		.then((result)=>{
