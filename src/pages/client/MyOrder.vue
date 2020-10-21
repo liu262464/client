@@ -30,7 +30,7 @@
             <span class="unitPrice">{{'￥'+item.product.price}}</span>
             <span class="num">{{item.order.num}}</span>
             <span class="amount">{{'￥'+item.order.price}}</span>
-            <button v-if="item.order.state==='未支付'" @click="confirmPay(item.order.id)">确认付款</button>
+            <button v-if="item.order.state==='未支付'" @click="confirmPay(item.order.id,item.order.price)">确认付款</button>
             <button v-else-if="item.state==='已支付'" @click="confirmReceive(item.order.id)">确认收货</button>
 <!--            <button v-else-if="item.state===3 && !item.hasComment" @click="showPopup(item.order.id,item.product.id,item.product.goodsDetailId)">评价</button>-->
 <!--            <span class="hasComment" v-else-if="item.state===3 && item.hasComment">已评价</span>-->
@@ -38,31 +38,19 @@
         </li>
       </ul>
     </div>
-    <div id="qrcode"></div>
-    <Popup title="商品评价" @popupClose="closePopup" v-show="popupShow">
-      <div class="popupContent" slot="popupContent">
-        <div class="scoreBox">
-          <span class="tips">评分：</span>
-          <i
-            class="iconfont icon-collection_fill"
-            v-for="(item,index) in 5"
-            :key="'star'+index"
-            :style="{color:(index+1)<=curStar?'#f9bd4f':'white'}"
-            @mouseover="setCurStar(index+1)"
-            @mouseout="setCurStar(0)"
-            @click="confirmStar(index+1)"
-          />
+      <Popup title="请支付" @popupClose="closePopup" v-show="popupShow">
+        <div class="popupContent" slot="popupContent">
+          <div id="qrcode"></div>
+          <span>需支付¥ <span style="color: red"> {{totalPrice}}</span></span>
         </div>
-        <textarea v-model="comment" cols="30" rows="10" placeholder="请输入评论内容"></textarea>
-        <button @click="sendComment">发表</button>
-      </div>
-    </Popup>
+      </Popup>
+
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import {getOrderByState,deleteOrder,confirmReceive,pay,sendComment} from '../../api/client';
+import {getOrderByState,deleteOrder,confirmReceive,pay,sendComment,checkPayState} from '../../api/client';
 import Popup from '../../components/Popup';
 import QRCode from 'qrcodejs2'  // 引入qrcode
 
@@ -88,10 +76,19 @@ export default {
       curStar:0,
       hasClickStar:false,
       comment:'',
+      totalPrice:'',
+      tradeNo:'',
+      timer:''
     }
   },
 
   methods:{
+    showPopup(){
+      this.popupShow = true;
+    },
+    closePopup(){
+      this.popupShow = false;
+    },
     changeIndex(i){
       this.curIndex = i;
       this.getOrderByState(this.curIndex-1);
@@ -124,34 +121,32 @@ export default {
         alert(e);
       })
     },
+    confirmPay(orderId,totalPrice){
+      this.totalPrice = totalPrice
+      const res = pay("orderNo="+orderId);
 
-    confirmPay(orderId){
-      const res = pay(orderId);
       res.then((data)=>{
-          //alert("进入")
-          console.log(data)
-          alert(data.code_url)
-          //this.setClientName(data.username);
-          //this.setClientToken(data.token);
-          //this.$router.push('/');
+        this.showPopup()
+        this.tradeNo  = data.trade_no
+        this.qrcode(data.code_url)
+        this.timer = setInterval(()=>{
+          this.checkPayState(this.tradeNo,orderId)
+        },3000)
         })
         .catch((e)=>{
           alert(e)
         })
-/*      res
-      .then((data)=>{
-        //alert('支付成功！');
-        console.log(data)
-        //this.qrcode(data.code_url)
-        /!*this.orderList.map((item,index)=>{
-          if(item.id===orderId){
-            item.state = 1;
-          }
-        })*!/
+    },
+    //检测是否已支付
+    checkPayState(trade_no,oderId){
+      const res = checkPayState(trade_no,oderId)
+      res.then((message)=>{
+        if (message==="已支付") {
+          alert("已支付")
+          window.clearInterval(this.timer)
+          this.$router.go(0)
+        }
       })
-      .catch((e)=>{
-        alert(e);
-      })*/
     },
     confirmReceive(orderId){
       const res = confirmReceive(orderId);
@@ -223,6 +218,7 @@ export default {
     },
     //二维码生成
     qrcode(url) {
+      document.getElementById("qrcode").innerHTML = "";
       let qrcode = new QRCode('qrcode', {
         width: 132,
         height: 132,
@@ -243,15 +239,7 @@ export default {
 @import "../../assets/css/var.less";
 .MyOrder{
 
-  #qrcode {
-    display: inline-block;
-    img {
-      width: 132px;
-      height: 132px;
-      background-color: #fff; //设置白色背景色
-      padding: 6px; // 利用padding的特性，挤出白边
-    }
-  }
+
   .tagList{
     li{
       text-align: center;
@@ -378,7 +366,7 @@ export default {
       }
     }
   }
-  .popupContent{
+  /*.popupContent{
     padding: 10px;
     .scoreBox{
       width: 100%;
@@ -417,6 +405,26 @@ export default {
       background-color: #313541;
       color:white;
       border: none;
+    }
+
+  }*/
+
+  .popupContent{
+    padding: 10px;
+    width: 300px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    #qrcode {
+      margin: 0 auto;
+      //display: inline-block;
+      img {
+      //  width: 132px;
+       // height: 132px;
+        background-color: #fff; //设置白色背景色
+        //padding: 6px; // 利用padding的特性，挤出白边
+      }
     }
   }
 }

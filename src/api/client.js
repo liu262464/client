@@ -276,8 +276,8 @@ export function confirmReceive(id){
 }
 
 //确认付款
-export function pay(id){
-	const res = axios.get('/api/payLog/createQr/'+id);
+export function pay(data){
+	const res = axios.post('/api/payLog/createQr',data);
   return new Promise((resolve,reject)=>{
     res
       .then((result)=>{
@@ -290,7 +290,7 @@ export function pay(id){
       })
       .then((json)=>{
         if(json.code===0){
-          resolve();
+          resolve(json.data);
         }else{
           reject(json.message);
         }
@@ -301,6 +301,31 @@ export function pay(id){
   })
 }
 
+//检测支付状态
+export function checkPayState(tradeNo,orderNo){
+  const res = axios.get('/api/payLog/getPayState/'+tradeNo+'/'+orderNo);
+  return new Promise((resolve,reject)=>{
+    res
+      .then((result)=>{
+        if(result.status===200){
+          //console.log(result)
+          return result.data;
+        }else{
+          reject(result.status)
+        }
+      })
+      .then((json)=>{
+        if(json.code===0){
+          resolve(json.message);
+        }else{
+          reject(json.message);
+        }
+      })
+      .catch((e)=>{
+        reject(e.toString())
+      })
+  })
+}
 //获得用户资料
 export function getUserData(token){
 	const res = axios.get('/api/user/data?token='+token);
