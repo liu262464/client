@@ -31,7 +31,7 @@
             <span class="num">{{item.order.num}}</span>
             <span class="amount">{{'￥'+item.order.price}}</span>
             <button v-if="item.order.state==='未支付'" @click="confirmPay(item.order.id,item.order.price)">确认付款</button>
-            <button v-else-if="item.state==='已支付'" @click="confirmReceive(item.order.id)">确认收货</button>
+            <button v-else-if="item.order.state==='已支付'" @click="confirmReceive(item.order.id)">确认收货</button>
 <!--            <button v-else-if="item.state===3 && !item.hasComment" @click="showPopup(item.order.id,item.product.id,item.product.goodsDetailId)">评价</button>-->
 <!--            <span class="hasComment" v-else-if="item.state===3 && item.hasComment">已评价</span>-->
           </div>
@@ -140,8 +140,9 @@ export default {
     //检测是否已支付
     checkPayState(trade_no,oderId){
       const res = checkPayState(trade_no,oderId)
-      res.then((message)=>{
-        if (message==="已支付") {
+      res.then((data)=>{
+        console.log("检测支付状态"+data.payState)
+        if (data.payState==="支付成功") {
           alert("已支付")
           window.clearInterval(this.timer)
           this.$router.go(0)

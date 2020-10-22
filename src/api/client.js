@@ -316,7 +316,7 @@ export function checkPayState(tradeNo,orderNo){
       })
       .then((json)=>{
         if(json.code===0){
-          resolve(json.message);
+          resolve(json.data);
         }else{
           reject(json.message);
         }
